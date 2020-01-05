@@ -80,12 +80,13 @@
 	function addChord()
 	{
 		display.clean();
+
+		var octave = 5 ;
 		
 		for (var idx = 0; idx < currentChord.length; idx++) 
 		{
 			var note = currentChord[idx] ;
 			var key =  note ;
-			var octave = 4 ;
 			var slashIdx = note.indexOf("/") ;
 			
 			if(slashIdx>-1)
@@ -97,28 +98,34 @@
 
 			synthe.noteOff(key,octave) ;
 		}
+
 		currentChord=[] ;
+		currentChordVex=[] ;
 		pianoKeyboard.turnAllOff() ;
 	
 		
 		for (var idx = 0; idx < 3; idx++) {
 			var noteIdx = random(0,ui.NOTES_CHAR.length) ;
-			var noteChr = ui.NOTES_CHAR[noteIdx]+ "/4" ;
+			var noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
+			var noteChrVex = ui.NOTES_CHAR[noteIdx]+ "/" + (octave - 1) ;
 			
 			while(currentChord.includes(noteChr))
 			{
 				noteIdx = random(0,ui.NOTES_CHAR.length) ;
-				noteChr = ui.NOTES_CHAR[noteIdx]+ "/4"  ;
+				noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
+				noteChrVex = ui.NOTES_CHAR[noteIdx]+ "/" + (octave - 1) ;
 			}
 			
 			currentChord.push(noteChr) ;	
 			currentChord.sort() ;
 			
+			currentChordVex.push(noteChrVex) ;
+			currentChordVex.sort() ;
 		}
 		
 		var vexNote = new VF.StaveNote({
             clef: "treble",
-            keys: currentChord,
+            keys: currentChordVex,
             duration: "4",
           });
 		display.addNote(vexNote);			
@@ -128,16 +135,20 @@
 	
 	function check()
 	{
-		if(pianoKeyboard.lightenedNotes().length==currentChord.length)
+		var lightenedNotes = pianoKeyboard.lightenedNotes() ;
+		
+		if(lightenedNotes.length==currentChord.length)
 		{
-			if(JSON.stringify(pianoKeyboard.lightenedNotes())==JSON.stringify(currentChord)) 
+			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
+			var currentChordStr = JSON.stringify(currentChord) ;
+			if(lightenedNotesStr == currentChordStr) 
 			{
-				$("#result")[0].innerHTML="Bien joué" ;
+				$("#result")[0].innerHTML="Good job" ;
 				addChord() ;
 			}
 			else
 			{
-				$("#result")[0].innerHTML="Essai encore" ;
+				$("#result")[0].innerHTML="Try again" ;
 			}
 		}
 	}
