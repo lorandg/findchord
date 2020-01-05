@@ -50,6 +50,9 @@
 			console.log("pianoKey="+pianoKey);
 			var octave = Math.floor(pianoKey/12) ;
 			var key = pianoKey-(octave*12) ;
+			
+			// update octave to be compliant with voxflex and classical octave notation
+			octave -= 1 ;
 			var note = PIANOKEY_2_NOTE[key] ;
 			
 			console.log("octave="+octave);
@@ -81,7 +84,7 @@
 	{
 		display.clean();
 
-		var octave = 5 ;
+		var octave = 4 ;
 		
 		for (var idx = 0; idx < currentChord.length; idx++) 
 		{
@@ -100,32 +103,26 @@
 		}
 
 		currentChord=[] ;
-		currentChordVex=[] ;
 		pianoKeyboard.turnAllOff() ;
 	
 		
 		for (var idx = 0; idx < 3; idx++) {
 			var noteIdx = random(0,ui.NOTES_CHAR.length) ;
 			var noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
-			var noteChrVex = ui.NOTES_CHAR[noteIdx]+ "/" + (octave - 1) ;
 			
 			while(currentChord.includes(noteChr))
 			{
 				noteIdx = random(0,ui.NOTES_CHAR.length) ;
 				noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
-				noteChrVex = ui.NOTES_CHAR[noteIdx]+ "/" + (octave - 1) ;
 			}
 			
 			currentChord.push(noteChr) ;	
 			currentChord.sort() ;
-			
-			currentChordVex.push(noteChrVex) ;
-			currentChordVex.sort() ;
 		}
 		
 		var vexNote = new VF.StaveNote({
             clef: "treble",
-            keys: currentChordVex,
+            keys: currentChord,
             duration: "4",
           });
 		display.addNote(vexNote);			
@@ -139,7 +136,7 @@
 		
 		if(lightenedNotes.length==currentChord.length)
 		{
-			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
+s			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
 			var currentChordStr = JSON.stringify(currentChord) ;
 			if(lightenedNotesStr == currentChordStr) 
 			{
