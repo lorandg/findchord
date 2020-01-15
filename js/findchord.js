@@ -115,37 +115,47 @@
 		for (var idx = 0; idx < currentChord.length; idx++) 
 		{
 			var note = currentChord[idx] ;
-			var key =  note ;
 			var slashIdx = note.indexOf("/") ;
-			var keyOct = octave ;
 			
 			if(slashIdx>-1)
 			{
-				key = note.substring(0,slashIdx) ;
+				var key = note.substring(0,slashIdx) ;
 				var octChar= note.substring(slashIdx+1,slashIdx+2) ;
-				keyOct = parseInt(octChar) ;
+				var keyOct = parseInt(octChar) ;
+				synthe.noteOff(key,keyOct) ;
+			}
+			else
+			{
+				console.log("invalid note "+note) ;
 			}
 
-			synthe.noteOff(key,keyOct) ;
 		}
 
 		currentChord=[] ;
 		pianoKeyboard.turnAllOff() ;
 	
+		var maxIdx = ui.NOTES_CHAR.length ;
 		
-		for (var idx = 0; idx < 3; idx++) {
-			var noteIdx = random(0,ui.NOTES_CHAR.length) ;
-			var noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
-			
-			while(currentChord.includes(noteChr))
-			{
-				noteIdx = random(0,ui.NOTES_CHAR.length) ;
-				noteChr = ui.NOTES_CHAR[noteIdx]+ "/" + octave ;
-			}
-			
-			currentChord.push(noteChr) ;	
-			currentChord.sort() ;
-		}
+		var note1Idx = random(0,maxIdx) ;
+		var octaveShift = 1- random(0,2); // -1, 0, 1
+		var note1Octave= octave + octaveShift ; 
+		var note1Chr = ui.NOTES_CHAR[note1Idx]+ "/" + note1Octave ;
+		currentChord.push(note1Chr) ;	
+
+		var note2Interval = 3- random(0,2); // 1, 2 ,3
+		var note2IdxBase = note1Idx + note2Interval; 
+		var note2Idx = note2IdxBase % maxIdx ;
+		var note2Octave= note1Octave + (note2IdxBase < maxIdx ? 0:1);
+		var note2Chr = ui.NOTES_CHAR[note2Idx]+ "/" + note2Octave ;
+		currentChord.push(note2Chr) ;	
+		
+		var note3Interval = 3 - random(0,2); // 1, 2 ,3
+		var note3IdxBase = note2Idx + note3Interval; 
+		var note3Idx = note3IdxBase % maxIdx ;
+		var note3Octave= note2Octave + ( note3IdxBase < maxIdx ? 0:1);
+		var note3Chr = ui.NOTES_CHAR[note3Idx]+ "/" + note3Octave ;
+		currentChord.push(note3Chr) ;	
+
 		currentChord.sort() ;
 		
 		var vexNote = new VF.StaveNote({
