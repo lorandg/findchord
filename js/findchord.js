@@ -1,10 +1,12 @@
-	
+
 	var display ;
 	var currentChord=[];
 	var pianoKeyboard ;
 	var synthe ;
 	var midiInput ;
-
+	var octave = 4 ;
+	var clef = "treble" ;
+	
 	const PIANOKEY_2_NOTE = {
 		"0":"c",
 		"1":"c#",
@@ -19,9 +21,34 @@
 		"10":"a#",
 		"11":"b",
 	};
-	
+
+	function clefSelectionChange(e) {
+		clef = e.target.value ;
+		console.log("clef selection change = "+clef );
+		  
+		switch(clef )
+		{
+			case "treble":
+			  octave = 4 ;
+			  break ;
+		
+			case "bass":
+			  octave = 3 ;
+			  break ;
+		}
+		$("#score").empty();
+		display = new score.Display($("#score")[0], clef) ;
+		display.init();
+			  
+		addChord();
+	}
+
 	function init()
 	{
+		var clefSelection = $("#clefSelection")[0] ;
+		clefSelection.addEventListener('input', clefSelectionChange);
+
+		
 		display = new score.Display($("#score")[0]) ;
 		display.init();
 
@@ -48,26 +75,26 @@
 		midiInput = new MidiInput(function(press, pianoKey){
 			
 			console.log("pianoKey="+pianoKey);
-			var octave = Math.floor(pianoKey/12) ;
-			var key = pianoKey-(octave*12) ;
+			var midiOctave = Math.floor(pianoKey/12) ;
+			var key = pianoKey-(midiOctave*12) ;
 			
 			// update octave to be compliant with voxflex and classical octave notation
-			octave -= 1 ;
+			midiOctave -= 1 ;
 			var note = PIANOKEY_2_NOTE[key] ;
 			
-			console.log("octave="+octave);
+			console.log("octave="+midiOctave);
 			console.log("note="+note);
 			
 			if(press)
 			{
-				pianoKeyboard.lightUp(note+"/"+octave) ;
-				synthe.noteOn(note,octave) ;
+				pianoKeyboard.lightUp(note+"/"+midiOctave) ;
+				synthe.noteOn(note,midiOctave) ;
 				check() ;
 			}
 			else
 			{
-				pianoKeyboard.turnOff(note+"/"+octave) ;
-				synthe.noteOff(note,octave) ;
+				pianoKeyboard.turnOff(note+"/"+midiOctave) ;
+				synthe.noteOff(note,midiOctave) ;
 			}
 			
 		}) ;
@@ -84,22 +111,22 @@
 	{
 		display.clean();
 
-		var octave = 4 ;
 		
 		for (var idx = 0; idx < currentChord.length; idx++) 
 		{
 			var note = currentChord[idx] ;
 			var key =  note ;
 			var slashIdx = note.indexOf("/") ;
+			var keyOct = octave ;
 			
 			if(slashIdx>-1)
 			{
 				key = note.substring(0,slashIdx) ;
 				var octChar= note.substring(slashIdx+1,slashIdx+2) ;
-				octave = parseInt(octChar) ;
+				keyOct = parseInt(octChar) ;
 			}
 
-			synthe.noteOff(key,octave) ;
+			synthe.noteOff(key,keyOct) ;
 		}
 
 		currentChord=[] ;
@@ -119,9 +146,10 @@
 			currentChord.push(noteChr) ;	
 			currentChord.sort() ;
 		}
+		currentChord.sort() ;
 		
 		var vexNote = new VF.StaveNote({
-            clef: "treble",
+            clef: clef,
             keys: currentChord,
             duration: "4",
           });
@@ -134,9 +162,9 @@
 	{
 		var lightenedNotes = pianoKeyboard.lightenedNotes() ;
 		
-		if(lightenedNotes.length==currentChord.length)
+		if(lightenedNotes.length>=currentChord.length)
 		{
-s			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
+			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
 			var currentChordStr = JSON.stringify(currentChord) ;
 			if(lightenedNotesStr == currentChordStr) 
 			{
@@ -146,6 +174,7 @@ s			var lightenedNotesStr = JSON.stringify(lightenedNotes) ;
 			else
 			{
 				$("#result")[0].innerHTML="Try again" ;
+				pianoKeyboard.turnAllOff() ;
 			}
 		}
 	}

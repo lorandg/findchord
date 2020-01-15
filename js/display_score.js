@@ -3,8 +3,9 @@ VF = Vex.Flow ;
 var score = new function()
 {
 	
-	this.Display = function (canvas)
+	this.Display = function (canvas, clef)
 	{
+		var clef = clef || "treble";
 		
 		var canvas = canvas; 
 		
@@ -32,11 +33,10 @@ var score = new function()
 
 		function processStave() {
 			stave = new Vex.Flow.Stave(10, 20, MAX_STAVE_WIDTH);
-			stave.addClef("treble");
-			stave.addTimeSignature(numBeats + "/" + beatValue);
-			stave.addKeySignature("C");
+			stave.addClef(clef);
 		}
-		
+
+
 		function processNotes() {
 
 			// create a voice in 4/4
@@ -98,6 +98,17 @@ var score = new function()
 			
 			ctx.clear();
 			processStave();
+			drawStave();
+			if (notes.length > 0) {
+				processNotes();
+				drawNotes();
+			}
+		}
+
+		this.changeClef = function(clef) {
+			this.clef = clef ;
+			ctx.clear();
+			stave.addClef(clef) ;
 			drawStave();
 			if (notes.length > 0) {
 				processNotes();
