@@ -1,4 +1,4 @@
-// adaptation from https://keithwhor.com/music/
+// adapted from https://keithwhor.com/music/
 var Keyboard = function (listener)
 {
 	var listener = listener ;
@@ -10,24 +10,34 @@ var Keyboard = function (listener)
 	__audioSynth.setVolume(0.5);
 	var __octave = 4;
 	
+	this.changeOctave  = function(x) {
+		fnChangeOctaveByValue(x) ;
+	}
+	
 	// Change octave
 	var fnChangeOctave = function(x) {
 
 		x |= 0;
 	
-		__octave += x;
-	
-		__octave = Math.min(5, Math.max(3, __octave));
-	
+		var octave = __octave + x;
+		octave = Math.min(5, Math.max(3, octave));
+		fnChangeOctaveByValue(octave) ;
+	};
+
+	var fnChangeOctaveByValue = function (octave)
+	{
+		__octave = octave ;
 		var octaveName = document.getElementsByName('OCTAVE_LABEL');
 		var i = octaveName.length;
 		while(i--) {
 			var val = parseInt(octaveName[i].getAttribute('value'));
 			octaveName[i].innerHTML = (val + __octave);
 		}
-	
-	};
 
+		listener.onOctaveChange(__octave) ;	
+	}
+	
+	
 	// Key bindings, notes to keyCodes.
 	var keyboard = {
 		
@@ -296,7 +306,7 @@ var Keyboard = function (listener)
 		var octave = __octave + octaveModifier
 		fnPlayNote(note, octave);
 
-		listener(note, octave);
+		listener.onKeyPressed(note, octave);
 	}
 
 	// Remove key bindings once note is done.

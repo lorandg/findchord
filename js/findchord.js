@@ -1,7 +1,7 @@
 
 	var displayScore ;
 	var currentChord=[];
-	var curentOctave = 4 ;
+	var currentOctave = 4 ;
 	var keyboard ;
 	var midiInput ;
 	var clef = "treble" ;
@@ -26,26 +26,6 @@
 		"11":"B",
 	};
 
-	function clefSelectionChange(e) {
-		clef = e.target.value ;
-		console.log("clef selection change = "+clef );
-		  
-		switch(clef )
-		{
-			case "treble":
-			  curentOctave = 4 ;
-			  break ;
-		
-			case "bass":
-			  curentOctave = 3 ;
-			  break ;
-		}
-		$("#score").empty();
-		displayScore = new score.Display($("#score")[0], clef) ;
-		displayScore.init();
-			  
-		addChord();
-	}
 
 	function init()
 	{
@@ -56,15 +36,27 @@
 		displayScore = new score.Display($("#score")[0]) ;
 		displayScore.init();
 
-		keyboard = new Keyboard(function(note, octave)
+		class Listener 
 		{
-			console.log("octave="+octave);
-			console.log("note="+note);
-			var noteChr = note+ "/" + octave;
-			playedNotes.push(noteChr) ;	
+			onKeyPressed(note, octave)
+			{
+				console.log("octave="+octave);
+				console.log("note="+note);
+				var noteChr = note+ "/" + octave;
+				playedNotes.push(noteChr) ;	
+				check() ;
+			}
 
-			check() ;
-		});
+			onOctaveChange(octave)
+			{
+				currentOctave = octave;
+				newChord() ;
+			}
+		};
+		
+		const listener = new Listener() ;
+		
+		keyboard = new Keyboard(listener) ;
 		keyboard.draw() ;
 		
 		midiInput = new MidiInput(function(press, pianoKey){
@@ -82,13 +74,13 @@
 			
 			if(press)
 			{
-				piano.keyPressed(octave, note);
+				piano.pressKey(octave, note);
 			}
 			
 		}) ;
 		
 		
-		addChord() ;
+		newChord() ;
 	}
 	
 
@@ -96,7 +88,7 @@
 	    return parseInt(Math.random() * (high - low) + low);
 	}
 
-	function addChord()
+	function newChord()
 	{
 		displayScore.clean();
 
@@ -104,10 +96,11 @@
 		currentChord=[] ;
 	
 		var maxIdx = NOTES_CHAR.length ;
-		
+		var lowerOctave = currentOctave -1 ;
+		var upperOctave = currentOctave +1 ;
 		var note1Idx = random(0,maxIdx) ;
 		var octaveShift = 1- random(0,2); // -1, 0, 1
-		var note1Octave= curentOctave + octaveShift ; 
+		var note1Octave= lowerOctave + octaveShift ; 
 		var note1Chr = NOTES_CHAR[note1Idx]+ "/" + note1Octave ;
 		currentChord.push(note1Chr) ;	
 
@@ -131,6 +124,11 @@
             duration: "4",
           });
 		displayScore.addNote(vexNote);			
+				
+		if(note3Octave>upperOctave)
+		{
+			newChord() ;
+		}
 
 	};
 
@@ -144,7 +142,7 @@
 			if(playedNotesStr == currentChordStr) 
 			{
 				$("#result")[0].innerHTML="Good job" ;
-				addChord() ;
+				newChord() ;
 			}
 			else
 			{
@@ -153,3 +151,25 @@
 			}
 		}
 	}
+	
+	function clefSelectionChange(e) {
+		clef = e.target.value ;
+		console.log("clef selection change = "+clef );
+		  
+		switch(clef )
+		{
+			case "treble":
+		      keyboard.changeOctave(4);
+			  break ;
+		
+			case "bass":
+		      keyboard.changeOctave(3);
+			  break ;
+		}
+		$("#score").empty();
+		displayScore = new score.Display($("#score")[0], clef) ;
+		displayScore.init();
+			  
+		newChord();
+	}
+
