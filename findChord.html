@@ -15,30 +15,38 @@
 </head>
 <body onload="init()">
 	<center>
-<select id="sound">
-	<option value="0" selected="">Keyboard</option>
-	<option value="1">Organ</option>
-    <option value="2">Acoustic Guitar</option>
-    <option value="3">EDM, bro!</option>
-</select>
-	<span id="clefSelection">
-		<input type="radio" name="clefSelection" value="treble" checked >Treble
-		<input type="radio" name="clefSelection" value="bass">Bass
-	</span>
-	<div id="container">
-		<div id="score" style="center"></div>
-	</div>
-	
-	<table>
-		<tr>
-			<td><input type="button" ID="-_OCTAVE" value="<" /></td>
-			<td><div ID="keyboard" class="keyboard-holder"></div></td>
-			<td><input type="button" ID="+_OCTAVE" value=">" /></td>
-		</tr>
-	</table>
+		<h1>Find Chord</h1>
+		Sound
+		<select id="sound">
+			<option value="0" selected="">Piano</option>
+			<option value="1">Organ</option>
+			<option value="2">Acoustic Guitar</option>
+			<option value="3">EDM, bro!</option>
+		</select>
+		| Clef
+		 <span id="clefSelection"> 
+		 	<input type="radio" name="clefSelection" value="treble" checked>Treble 
+		 	<input type="radio" name="clefSelection" value="bass">Bass
+		</span>
+		| Keyboard
+		 <span id="keyboardSelection"> 
+		 	<input type="radio" name="keyboardSelection" value="querty" checked>Querty 
+		 	<input type="radio" name="keyboardSelection" value="azerty">Azerty
+		</span>
+		<div id="container">
+			<div id="score" style=""></div>
+		</div>
+
+		<table>
+			<tr>
+				<td><input type="button" ID="-_OCTAVE" value="<" /></td>
+				<td><div ID="keyboard" class="keyboard-holder"></div></td>
+				<td><input type="button" ID="+_OCTAVE" value=">" /></td>
+			</tr>
+		</table>
+		<p id="result"></p>
 	</center>
 
 
- 	<p id="result"></p>
 </body>
 </html>

@@ -48,6 +48,11 @@ var MidiInput = function(listener)
 
 	
 	function oMidiInput(){
+		if (navigator.requestMIDIAccess)
+			navigator.requestMIDIAccess().then(onMIDIInit,
+					onMIDIReject);
+		else
+			console.log("No MIDI support present in your browser.  You're gonna have a bad time.") ;
 	}
 	
 	oMidiInput.prototype =

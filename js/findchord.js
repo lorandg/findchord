@@ -74,7 +74,11 @@
 			
 			if(press)
 			{
-				piano.pressKey(octave, note);
+				keyboard.pressKey(note, octave);
+			}
+			else
+			{
+				keyboard.releaseKey(note, octave) ;
 			}
 			
 		}) ;

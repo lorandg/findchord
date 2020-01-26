@@ -10,6 +10,33 @@ var Keyboard = function (listener)
 	__audioSynth.setVolume(0.5);
 	var __octave = 4;
 	
+	
+	var keyboardSelection = $("#keyboardSelection")[0] ;
+	keyboardSelection.addEventListener('input', keyboardSelectionChange);
+
+	function keyboardSelectionChange(e) {
+		var selectedKeyboard = e.target.value ;
+		console.log("keyboard selection change = "+selectedKeyboard );
+		  
+		switch(selectedKeyboard )
+		{
+			case "querty":
+				keyboard = querty ;
+				reverseLookupText = quertyReverseLookupText;
+				reverseLookup = quertyReverseLookup;
+				break ;
+		
+			case "azerty":
+				keyboard = azerty ;
+				reverseLookupText = azertyReverseLookupText;
+				reverseLookup = azertyReverseLookup;				
+			  break ;
+		}
+		
+		fnCreateKeyboard() ;
+	}
+
+	
 	this.changeOctave  = function(x) {
 		fnChangeOctaveByValue(x) ;
 	}
@@ -37,9 +64,164 @@ var Keyboard = function (listener)
 		listener.onOctaveChange(__octave) ;	
 	}
 	
+	// Key bindings, notes to keyCodes.
+	
+	const azerty = {
+		
+			/* é */
+			50: 'C#,-1',
+			
+			/* " */
+			51: 'D#,-1',
+			
+			/* ( */
+			53: 'F#,-1',
+			
+			/* - */
+			54: 'G#,-1',
+			
+			/* è */
+			55: 'A#,-1',
+			
+			/* ç */
+			57: 'C#,0',
+			
+			/* à */
+			48: 'D#,0',
+			
+			/* = */
+			187: 'F#,0',
+			
+			/* A */
+			65: 'C,-1',
+			
+			/* Z */
+			90: 'D,-1',
+			
+			/* E */
+			69: 'E,-1',
+			
+			/* R */
+			82: 'F,-1',
+			
+			/* T */
+			84: 'G,-1',
+			
+			/* Y */
+			89: 'A,-1',
+			
+			/* U */
+			85: 'B,-1',
+			
+			/* I */
+			73: 'C,0',
+			
+			/* O */
+			79: 'D,0',
+			
+			/* P */
+			80: 'E,0',
+
+			/* ^ */
+			221: 'F,0',
+			
+			/* $ */
+			186: 'G,0',
+		
+			/* Q */
+			81: 'G#,0',
+		
+			/* S */
+			83: 'A#,0',
+			
+			/* F */
+			70: 'C#,1',
+		
+			/* G */
+			71: 'D#,1',
+		
+			/* J */
+			74: 'F#,1',
+		
+			/* K */
+			75: 'G#,1',
+		
+			/* L */
+			76: 'A#,1',
+		
+			/* W */
+			87: 'A,0',
+		
+			/* X */
+			88: 'B,0',
+		
+			/* C */
+			67: 'C,1',
+		
+			/* V */
+			86: 'D,1',
+		
+			/* B */
+			66: 'E,1',
+		
+			/* N */
+			78: 'F,1',
+		
+			/* , */
+			188: 'G,1',
+			
+			/*  */
+			190: 'A,1',
+			
+			/* : */
+			191: 'B,1'
+		
+		};
+	
+	var azertyReverseLookupText = {};
+	var azertyReverseLookup = {};
+
+	// Create a reverse lookup table.
+	for(var i in azerty) {
+	
+		var val;
+
+		switch(i|0) {
+		
+			case 187:
+				val = 61;
+				break;
+			
+			case 219:
+				val = 91;
+				break;
+			
+			case 221:
+				val = 93;
+				break;
+			
+			case 188:
+				val = 44;
+				break;
+			
+			case 190:
+				val = 46;
+				break;
+			
+			default:
+				val = i;
+				break;
+			
+		}
+	
+		azertyReverseLookupText[azerty[i]] = val;
+		azertyReverseLookup[azerty[i]] = i;
+	
+	}
 	
 	// Key bindings, notes to keyCodes.
-	var keyboard = {
+	
+	const querty = {
 		
 			/* 2 */
 			50: 'C#,-1',
@@ -69,7 +251,7 @@ var Keyboard = function (listener)
 			/* Q */
 			81: 'C,-1',
 			
-			/* W */
+			/* Z */
 			87: 'D,-1',
 			
 			/* E */
@@ -152,11 +334,11 @@ var Keyboard = function (listener)
 		
 		};
 	
-	var reverseLookupText = {};
-	var reverseLookup = {};
+	var quertyReverseLookupText = {};
+	var quertyReverseLookup = {};
 
 	// Create a reverse lookup table.
-	for(var i in keyboard) {
+	for(var i in querty) {
 	
 		var val;
 
@@ -188,10 +370,14 @@ var Keyboard = function (listener)
 			
 		}
 	
-		reverseLookupText[keyboard[i]] = val;
-		reverseLookup[keyboard[i]] = i;
+		quertyReverseLookupText[querty[i]] = val;
+		quertyReverseLookup[querty[i]] = i;
 	
 	}
+
+	var keyboard = querty ;
+	var reverseLookupText = quertyReverseLookupText;
+	var reverseLookup = quertyReverseLookup;
 
 	// Keys you have pressed down.
 	var keysPressed = [];
@@ -268,6 +454,9 @@ var Keyboard = function (listener)
 				return false;	
 			}
 		}
+		
+		console.log(String.fromCharCode(e.keyCode)+":"+e.keyCode);
+		
 		keysPressed.push(e.keyCode);
 	
 		switch(e.keyCode) {
@@ -286,14 +475,28 @@ var Keyboard = function (listener)
 	
 		var key = keyboard[e.keyCode] ;
 		if(key) {
-			pressKey(key) ;
+			fnPressKey(key) ;
 		} else {
 			return false;	
 		}
 	
 	}
 	
-	var pressKey = function(key)
+	
+	this.pressKey = function(note, octave)
+	{
+		fnPlayNote(note, octave);
+		var octaveModifier = octave - __octave  ; 
+		fnPressKey(`${note},${octaveModifier}`)
+	}
+
+	this.releaseKey = function(note, octave)
+	{
+		var octaveModifier = octave - __octave  ; 
+		fnReleaseKey(`${note},${octaveModifier}`) ;
+	}
+	
+	var fnPressKey = function(key)
 	{
 		if(visualKeyboard[key]) {
 			visualKeyboard[key].style.backgroundColor = '#ff0000';
@@ -311,20 +514,25 @@ var Keyboard = function (listener)
 
 	// Remove key bindings once note is done.
 
-	var fnRemoveKeyBinding = function(e) {
-	
+	var fnRemoveKeyBinding = function(e) 
+	{
 		var i = keysPressed.length;
 		while(i--) {
 			if(keysPressed[i]==e.keyCode) {
-				if(visualKeyboard[keyboard[e.keyCode]]) {
-					visualKeyboard[keyboard[e.keyCode]].style.backgroundColor = '';
-					visualKeyboard[keyboard[e.keyCode]].style.marginTop = '';
-					visualKeyboard[keyboard[e.keyCode]].style.boxShadow = '';
-				}
+				key = keyboard[e.keyCode] ;
+				fnReleaseKey(key) ;
 				keysPressed.splice(i, 1);
 			}
 		}
+	}
 	
+	var fnReleaseKey = function(key)
+	{	
+		if(visualKeyboard[key]) {
+			visualKeyboard[key].style.backgroundColor = '';
+			visualKeyboard[key].style.marginTop = '';
+			visualKeyboard[key].style.boxShadow = '';
+		}	
 	}
 
 
