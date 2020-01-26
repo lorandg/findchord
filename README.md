@@ -5,7 +5,7 @@ Tested only on Chrome (and probably working only)
 
 # CREDITS
 
-Base on :
+Based on :
 - https://www.w3.org/TR/webmidi/ to listen piano keyboard input
 - Vex flow http://www.vexflow.com/ to display scores
 - JS Dynamic Audio Synth https://github.com/keithwhor/audiosynth
