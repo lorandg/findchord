@@ -13,7 +13,7 @@
 <script type="text/javascript" src="js/keyboard.js"></script>
 <script type="text/javascript" src="js/findchord.js"></script>
 </head>
-<body onload="init()">
+<body >
 	<center>
 		<h1>Find Chord</h1>
 		Sound
@@ -33,15 +33,16 @@
 		 	<input type="radio" name="keyboardSelection" value="querty" checked>Querty 
 		 	<input type="radio" name="keyboardSelection" value="azerty">Azerty
 		</span>
+		<button onclick="init()">Start</button>
 		<div id="container">
 			<div id="score" style=""></div>
 		</div>
 
 		<table>
 			<tr>
-				<td><input type="button" ID="-_OCTAVE" value="<" /></td>
+				<td><input type="button" ID="-_OCTAVE" value="<" style="display:none"/></td>
 				<td><div ID="keyboard" class="keyboard-holder"></div></td>
-				<td><input type="button" ID="+_OCTAVE" value=">" /></td>
+				<td><input type="button" ID="+_OCTAVE" value=" >" style="display:none"/></td>
 			</tr>
 		</table>
 		<p id="result"></p>

@@ -540,6 +540,8 @@ var Keyboard = function (listener)
 
 	window.addEventListener('keydown', fnPlayKeyboard);
 	window.addEventListener('keyup', fnRemoveKeyBinding);
+	document.getElementById('-_OCTAVE').style.display="block";
+	document.getElementById('+_OCTAVE').style.display="block";
 	document.getElementById('-_OCTAVE').addEventListener('click', function() { fnChangeOctave(-1); });
 	document.getElementById('+_OCTAVE').addEventListener('click', function() { fnChangeOctave(1); });
 	
