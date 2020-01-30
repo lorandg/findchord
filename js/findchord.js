@@ -139,10 +139,11 @@
 	
 	function check()
 	{
+		console.log(playedNotes+":"+currentChord) ;
 		if(playedNotes.length>=currentChord.length)
 		{
-			var playedNotesStr = JSON.stringify(playedNotes) ;
-			var currentChordStr = JSON.stringify(currentChord) ;
+			var playedNotesStr = JSON.stringify(playedNotes.sort()) ;
+			var currentChordStr = JSON.stringify(currentChord.sort()) ;
 			if(playedNotesStr == currentChordStr) 
 			{
 				$("#result")[0].innerHTML="Good job" ;
