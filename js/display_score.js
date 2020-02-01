@@ -68,6 +68,7 @@ var score = new function()
 		
 		this.addNote = function(staveNoteObj) 
 		{
+			noteIndex++ ;
 			var noteWidth = (notes.length+1) * 180;
 			if (noteWidth<=stave.width) {
 				notes.splice(notes.length, 1, new Vex.Flow.StaveNote(staveNoteObj));
@@ -94,7 +95,7 @@ var score = new function()
 		
 		this.deleteNote = function() 
 		{
-			notes.splice(noteIndex, 1);
+			notes.splice(notes.length-1, 1);
 			
 			ctx.clear();
 			processStave();

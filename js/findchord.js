@@ -42,8 +42,22 @@
 			{
 				console.log("octave="+octave);
 				console.log("note="+note);
+				
+				if(playedNotes.length > 0)
+					displayScore.deleteNote();
+				
 				var noteChr = note+ "/" + octave;
 				playedNotes.push(noteChr) ;	
+				
+				var vexNote = new VF.StaveNote({
+		            clef: clef,
+		            keys: playedNotes,
+		            duration: "4",
+		          });
+				
+				vexNote.setStyle({fillStyle: "red", strokeStyle: "red"});
+				displayScore.addNote(vexNote);			
+
 				check() ;
 			}
 
@@ -75,10 +89,6 @@
 			if(press)
 			{
 				keyboard.pressKey(note, octave);
-			}
-			else
-			{
-				keyboard.releaseKey(note, octave) ;
 			}
 			
 		}) ;
@@ -136,8 +146,11 @@
 
 	};
 
+	function sleep(ms) {
+		  return new Promise(resolve => setTimeout(resolve, ms));
+	}
 	
-	function check()
+	async function check()
 	{
 		console.log(playedNotes+":"+currentChord) ;
 		if(playedNotes.length>=currentChord.length)
@@ -151,11 +164,25 @@
 			}
 			else
 			{
-				$("#result")[0].innerHTML="Try again" ;
-				playedNotes = [] ;
+				$("#result")[0].innerHTML="Try again" ;	
+				
+				await sleep(1000);				
+				displayScore.deleteNote();
 			}
+
+
+			playedNotes.forEach(playNote => {
+				var arrPlayNote = playNote.split('/');
+				var note = arrPlayNote[0];
+				var octave = arrPlayNote[1];
+
+				keyboard.releaseKey(note, octave) ;
+			});
+
+			playedNotes = [] ;
 		}
 	}
+	
 	
 	function clefSelectionChange(e) {
 		clef = e.target.value ;

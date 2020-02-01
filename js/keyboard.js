@@ -380,7 +380,6 @@ var Keyboard = function (listener)
 	var reverseLookup = quertyReverseLookup;
 
 	// Keys you have pressed down.
-	var keysPressed = [];
 	var visualKeyboard = null;
 	var selectSound = null;
 
@@ -426,7 +425,6 @@ var Keyboard = function (listener)
 
 		visualKeyboard.style.width = iWhite * 40 + 'px';
 
-		window.addEventListener(evtListener[1], function() { n = keysPressed.length; while(n--) { fnRemoveKeyBinding({keyCode:keysPressed[n]}); } });
 	
 	};
 
@@ -447,18 +445,9 @@ var Keyboard = function (listener)
 
 	// Detect keypresses, play notes.
 	var fnPlayKeyboard = function(e) {
-	
-		var i = keysPressed.length;
-		while(i--) {
-			if(keysPressed[i]==e.keyCode) {
-				return false;	
-			}
-		}
-		
+			
 		console.log(String.fromCharCode(e.keyCode)+":"+e.keyCode);
-		
-		keysPressed.push(e.keyCode);
-	
+			
 		switch(e.keyCode) {
 		
 			// left
@@ -512,19 +501,6 @@ var Keyboard = function (listener)
 		listener.onKeyPressed(note, octave);
 	}
 
-	// Remove key bindings once note is done.
-
-	var fnRemoveKeyBinding = function(e) 
-	{
-		var i = keysPressed.length;
-		while(i--) {
-			if(keysPressed[i]==e.keyCode) {
-				key = keyboard[e.keyCode] ;
-				fnReleaseKey(key) ;
-				keysPressed.splice(i, 1);
-			}
-		}
-	}
 	
 	var fnReleaseKey = function(key)
 	{	
@@ -539,7 +515,6 @@ var Keyboard = function (listener)
 	// Set up global event listeners
 
 	window.addEventListener('keydown', fnPlayKeyboard);
-	window.addEventListener('keyup', fnRemoveKeyBinding);
 	document.getElementById('-_OCTAVE').style.display="block";
 	document.getElementById('+_OCTAVE').style.display="block";
 	document.getElementById('-_OCTAVE').addEventListener('click', function() { fnChangeOctave(-1); });
